@@ -1,0 +1,5 @@
+﻿Django>=4.2
+psycopg2-binary>=2.9
+djangorestframework
+djangorestframework-simplejwt
+dotenv
