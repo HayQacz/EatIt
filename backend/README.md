@@ -9,11 +9,11 @@ A web application supporting client, waiter, and kitchen workflows in a restaura
 - **Database**: PostgreSQL (Dockerized)
 - **Authentication**: JWT (SimpleJWT)
 - **Documentation**: Swagger (drf-yasg)
-- **UI**: planned frontend (React)
+- **UI**: planned frontend (React/HTML)
 
 ---
 
-## 🧪 Local Setup
+## 🧶 Local Setup
 
 ### 1. Run with Docker Compose
 
@@ -29,22 +29,26 @@ Adminer (DB GUI): `http://localhost:8085`
 
 ## 🚪 REST API Endpoints
 
-| Endpoint                      | Description                              | Access Level        |
-|-------------------------------|------------------------------------------|---------------------|
-| `POST /api/users/register/`  | Register a new user                      | Public              |
-| `GET /api/users/me/`         | Get current authenticated user          | Authenticated       |
-| `GET /api/users/`            | List all users                          | Manager only        |
-| `PATCH /api/users/<id>/`     | Update user details                     | Manager only        |
-| `GET /api/menu/items/`       | List all menu items                     | Everyone            |
-| `POST /api/menu/items/`      | Add a new menu item                     | Manager only        |
-| `PATCH/DELETE /items/<id>/` | Update/Delete a menu item               | Manager only        |
-| `GET /api/orders/`           | List orders based on user role          | Varies              |
-| `POST /api/orders/`          | Create a new order                      | Client/Waiter       |
-| `PATCH /api/orders/<id>/`    | Change order status (Manager only)     | Manager only        |
-| `GET /api/orders/stats/`     | Order statistics by status              | Authenticated       |
-| `GET /api/orders/manager/`   | All orders                              | Manager             |
-| `GET /api/orders/kitchen/`   | Orders to prepare (kitchen)             | Kitchen             |
-| `GET /api/orders/waiter/`    | Orders ready to serve (waiter)          | Waiter              |
+| Endpoint                            | Description                                  | Access Level        |
+|-------------------------------------|----------------------------------------------|---------------------|
+| `POST /api/users/register/`        | Register a new user                          | Public              |
+| `GET /api/users/me/`               | Get current authenticated user              | Authenticated       |
+| `GET /api/users/`                  | List all users                              | Manager only        |
+| `PATCH /api/users/<id>/`           | Update user details                         | Manager only        |
+| `GET /api/menu/items/`             | List all menu items                         | Everyone            |
+| `POST /api/menu/items/`            | Add a new menu item                         | Manager only        |
+| `PATCH/DELETE /items/<id>/`       | Update/Delete a menu item                   | Manager only        |
+| `POST /menu/items/<id>/toggle-availability/` | Toggle item availability           | Manager or Kitchen  |
+| `GET /api/orders/`                 | List orders based on user role              | Varies              |
+| `POST /api/orders/`                | Create a new order                          | Client/Waiter       |
+| `PATCH /api/orders/<id>/`          | Change order status                         | Manager only        |
+| `GET /api/orders/<id>/history/`    | Get status change history for an order     | Manager/Waiter      |
+| `GET /api/orders/stats/`           | Order statistics by status                  | Authenticated       |
+| `GET /api/orders/manager/`         | All orders                                  | Manager             |
+| `GET /api/orders/kitchen/`         | Orders to prepare (kitchen)                 | Kitchen             |
+| `GET /api/orders/waiter/`          | Orders ready to serve (waiter)              | Waiter              |
+| `GET /api/orders/<id>/`            | Retrieve a single order                     | Authenticated + Permissions |
+| `GET /api/orders/<id>/history/`    | List status history for an order           | Authenticated       |
 
 ---
 
@@ -66,11 +70,19 @@ Adminer (DB GUI): `http://localhost:8085`
 ## ✅ Feature Checklist
 
 - [x] JWT Authentication + role system
-- [x] Menu item CRUD
-- [x] Order management + status control
+- [x] Menu item CRUD + image support
+- [x] Order management + status transitions + status history
 - [x] Role-based views (manager, waiter, kitchen)
 - [x] Order statistics
 - [x] Swagger API docs
+- [x] Throttling + rate limiting
+- [x] Audit logging to file + model
+- [x] Filter orders by status and created_at
+- [x] Toggle item availability (manager/kitchen)
+- [x] Unittest coverage for users, menu, orders
+- [x] Logging of user actions in critical endpoints
+- [x] Endpoint for order status history
+- [x] Extended API documentation
 - [ ] Frontend (upcoming)
 
 ---
@@ -84,7 +96,9 @@ backend/
 │   ├── orders/
 │   ├── users/
 │   └── urls.py
-├── core/           
+├── core/            # custom User model + models
+├── media/           # uploaded images
+├── logs/            # audit logs
 ├── manage.py
 ├── settings.py
 └── swagger_urls.py

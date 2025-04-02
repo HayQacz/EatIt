@@ -75,3 +75,15 @@ class OrderStatusHistory(models.Model):
 
     def __str__(self):
         return f"Order #{self.order.id} changed to {self.status} by {self.changed_by} at {self.timestamp}"
+
+class AuditLog(models.Model):
+    action = models.CharField(max_length=100)
+    performed_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    details = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.timestamp} - {self.action} by {self.performed_by}"
