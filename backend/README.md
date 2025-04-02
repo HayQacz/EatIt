@@ -1,0 +1,97 @@
+﻿# EatIt - Restaurant Order Management System
+
+A web application supporting client, waiter, and kitchen workflows in a restaurant environment. The system allows placing and managing orders, controlling item availability, and managing users.
+
+---
+
+## 📦 Tech Stack
+- **Backend**: Django + Django REST Framework
+- **Database**: PostgreSQL (Dockerized)
+- **Authentication**: JWT (SimpleJWT)
+- **Documentation**: Swagger (drf-yasg)
+- **UI**: planned frontend (React)
+
+---
+
+## 🧪 Local Setup
+
+### 1. Run with Docker Compose
+
+```bash
+docker-compose up --build
+```
+
+Django Server: `http://localhost:8000`
+
+Adminer (DB GUI): `http://localhost:8085`
+
+---
+
+## 🚪 REST API Endpoints
+
+| Endpoint                      | Description                              | Access Level        |
+|-------------------------------|------------------------------------------|---------------------|
+| `POST /api/users/register/`  | Register a new user                      | Public              |
+| `GET /api/users/me/`         | Get current authenticated user          | Authenticated       |
+| `GET /api/users/`            | List all users                          | Manager only        |
+| `PATCH /api/users/<id>/`     | Update user details                     | Manager only        |
+| `GET /api/menu/items/`       | List all menu items                     | Everyone            |
+| `POST /api/menu/items/`      | Add a new menu item                     | Manager only        |
+| `PATCH/DELETE /items/<id>/` | Update/Delete a menu item               | Manager only        |
+| `GET /api/orders/`           | List orders based on user role          | Varies              |
+| `POST /api/orders/`          | Create a new order                      | Client/Waiter       |
+| `PATCH /api/orders/<id>/`    | Change order status (Manager only)     | Manager only        |
+| `GET /api/orders/stats/`     | Order statistics by status              | Authenticated       |
+| `GET /api/orders/manager/`   | All orders                              | Manager             |
+| `GET /api/orders/kitchen/`   | Orders to prepare (kitchen)             | Kitchen             |
+| `GET /api/orders/waiter/`    | Orders ready to serve (waiter)          | Waiter              |
+
+---
+
+## 🔒 User Roles
+
+- `client` – end-user placing an order
+- `waiter` – waiter (can place orders on behalf of clients)
+- `kitchen` – kitchen staff (handles order preparation)
+- `manager` – system administrator with full control
+
+---
+
+## 📘 API Documentation
+- Swagger UI: [`/swagger/`](http://localhost:8000/swagger/)
+- Redoc: [`/redoc/`](http://localhost:8000/redoc/)
+
+---
+
+## ✅ Feature Checklist
+
+- [x] JWT Authentication + role system
+- [x] Menu item CRUD
+- [x] Order management + status control
+- [x] Role-based views (manager, waiter, kitchen)
+- [x] Order statistics
+- [x] Swagger API docs
+- [ ] Frontend (upcoming)
+
+---
+
+## 📂 Project Structure
+
+```
+backend/
+├── api/
+│   ├── menu/
+│   ├── orders/
+│   ├── users/
+│   └── urls.py
+├── core/           
+├── manage.py
+├── settings.py
+└── swagger_urls.py
+```
+
+---
+
+## 🛠️ Authors & Contact
+> For questions, issues, or collaboration opportunities — feel free to reach out to the project maintainer 😊
+> kontakt.hayq@gmail.com

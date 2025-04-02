@@ -47,6 +47,8 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.NEW)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    table_number = models.CharField(max_length=10, null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"Order #{self.id} by {self.user}" if self.user else f"Order #{self.id}"
