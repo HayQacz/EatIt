@@ -149,6 +149,7 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '100/day',
         'client': '200/hour',
+        'user': '300/minute',
         'waiter': '1500/hour',
         'kitchen': '1500/hour',
         'manager': '2000/hour',
