@@ -83,6 +83,7 @@ Adminer (DB GUI): `http://localhost:8085`
 - [x] Logging of user actions in critical endpoints
 - [x] Endpoint for order status history
 - [x] Extended API documentation
+- [x] Rate limiting for every role
 - [ ] Frontend (upcoming)
 
 ---
