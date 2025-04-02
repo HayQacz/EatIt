@@ -8,8 +8,8 @@ from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from core.models import Order
-from .serializers import OrderSerializer
+from core.models import Order, OrderStatusHistory
+from .serializers import OrderSerializer, OrderStatusHistorySerializer
 from .permissions import CanViewOrder, CanModifyOrderStatus, IsManager, IsKitchen, IsWaiter
 
 
@@ -22,12 +22,26 @@ class OrderListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        queryset = Order.objects.all()
+
         if user.role == 'client':
-            return Order.objects.filter(user=user)
+            queryset = queryset.filter(user=user)
         elif user.role == 'kitchen':
-            return Order.objects.filter(status__in=['new', 'in_progress'])
-        else:
-            return Order.objects.all()
+            queryset = queryset.filter(status__in=['new', 'in_progress'])
+
+        status = self.request.query_params.get('status')
+        if status:
+            queryset = queryset.filter(status=status)
+
+        created_after = self.request.query_params.get('created_after')
+        if created_after:
+            queryset = queryset.filter(created_at__gte=created_after)
+
+        created_before = self.request.query_params.get('created_before')
+        if created_before:
+            queryset = queryset.filter(created_at__lte=created_before)
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -74,6 +88,15 @@ class OrderDetailView(generics.RetrieveUpdateAPIView):
         if not CanModifyOrderStatus().has_permission(request, self):
             raise PermissionDenied("Only managers can change order status.")
         return self.partial_update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        if 'status' in serializer.validated_data:
+            OrderStatusHistory.objects.create(
+                order=instance,
+                status=instance.status,
+                changed_by=self.request.user
+            )
 
 
 class OrderStatsView(APIView):
@@ -139,3 +162,11 @@ class WaiterOrderListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(status='ready').order_by('-created_at')
+
+class OrderHistoryView(generics.ListAPIView):
+    serializer_class = OrderStatusHistorySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        order_id = self.kwargs['pk']
+        return OrderStatusHistory.objects.filter(order_id=order_id)

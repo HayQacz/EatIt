@@ -4,3 +4,4 @@ djangorestframework
 djangorestframework-simplejwt
 dotenv
 drf_yasg
+Pillow>=9.0

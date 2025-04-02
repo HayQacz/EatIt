@@ -30,6 +30,7 @@ class MenuItem(models.Model):
     available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey(MenuCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    image = models.ImageField(upload_to='menu_images/', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -62,3 +63,15 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.menu_item.name} (Order #{self.order.id})"
+
+class OrderStatusHistory(models.Model):
+    order = models.ForeignKey(Order, related_name="history", on_delete=models.CASCADE)
+    status = models.CharField(max_length=20)
+    changed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"Order #{self.order.id} changed to {self.status} by {self.changed_by} at {self.timestamp}"

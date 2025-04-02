@@ -1,5 +1,5 @@
 ﻿from rest_framework import serializers
-from core.models import Order, OrderItem, MenuItem
+from core.models import Order, OrderItem, MenuItem, OrderStatusHistory
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -25,3 +25,10 @@ class OrderSerializer(serializers.ModelSerializer):
         for item in items_data:
             OrderItem.objects.create(order=order, **item)
         return order
+
+class OrderStatusHistorySerializer(serializers.ModelSerializer):
+    changed_by = serializers.StringRelatedField()
+
+    class Meta:
+        model = OrderStatusHistory
+        fields = ['status', 'changed_by', 'timestamp']
